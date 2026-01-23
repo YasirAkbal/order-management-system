@@ -1,6 +1,7 @@
+### Spring Boot ###
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -31,3 +32,20 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Database ###
+*.db
+*.sql
+/data/
+/postgres-data/
+
+### macOS ###
+.DS_Store
+
+### Logs ###
+*.log
+
+### Maven ###
+.mvn/
+mvnw
+mvnw.cmd
