@@ -1,7 +1,10 @@
 package com.yasirakbal.ordermanagementsystem.customer.exception;
 
-public class DuplicateEmailException extends RuntimeException{
+import com.yasirakbal.ordermanagementsystem.common.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class DuplicateEmailException extends BusinessException {
     public DuplicateEmailException(String message) {
-        super(message);
+        super(message, HttpStatus.CONFLICT);
     }
 }

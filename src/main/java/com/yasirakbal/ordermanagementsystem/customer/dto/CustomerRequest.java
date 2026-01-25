@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @Getter
 @Setter
-public class CreateCustomerRequest {
+public class CustomerRequest {
     @NotBlank
     @Length(min = 2, max = 50)
     private String firstName;
