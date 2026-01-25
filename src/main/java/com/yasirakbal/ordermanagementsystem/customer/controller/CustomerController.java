@@ -70,24 +70,16 @@ public class CustomerController {
         );
 
         List<CustomerResponse> customerResponses = customerPage.stream().map(c -> customerResponseMapper.entityToDto(c)).toList();
+        CustomerPaginationResponse paginationResponse = new CustomerPaginationResponse(customerPage, customerResponses);
 
-        //refactor this
-        CustomerPaginationResponse response = CustomerPaginationResponse.builder()
-                .content(customerResponses)
-                .totalElements((int) customerPage.getTotalElements())
-                .totalPages(customerPage.getTotalPages())
-                .pageSize(customerPage.getSize())
-                .pageNumber(customerPage.getNumber())
-                .isFirst(customerPage.isFirst())
-                .isLast(customerPage.isLast())
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(paginationResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateUser(@RequestBody @Valid CustomerRequest request) {
+    public ResponseEntity<CustomerResponse> updateUser(@PathVariable @Min(1) long id, @RequestBody @Valid CustomerRequest request) {
         Customer customer = customerRequestMapper.dtoToEntity(request);
+        customer.setId(id);
+
         Customer updatedCustomer = customerService.updateCustomer(customer);
         CustomerResponse customerResponse = customerResponseMapper.entityToDto(updatedCustomer);
 

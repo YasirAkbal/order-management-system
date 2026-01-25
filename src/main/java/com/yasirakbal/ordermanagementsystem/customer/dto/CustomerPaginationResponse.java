@@ -1,21 +1,17 @@
 package com.yasirakbal.ordermanagementsystem.customer.dto;
 
+import com.yasirakbal.ordermanagementsystem.common.dto.PaginationResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
-@Data
-@Getter
-@Setter
-@Builder
-public class CustomerPaginationResponse {
-    private List<CustomerResponse> content;
-    private Integer totalElements;
-    private Integer totalPages;
-    private Integer pageSize;
-    private Integer pageNumber;
-    private Boolean isFirst;
-    private Boolean isLast;
+
+public class CustomerPaginationResponse extends PaginationResponse<CustomerResponse> {
+    public CustomerPaginationResponse(Page page, List<CustomerResponse> response) {
+        super(page, response);
+    }
 }
