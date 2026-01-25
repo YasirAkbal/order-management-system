@@ -1,6 +1,6 @@
 package com.yasirakbal.ordermanagementsystem.customer.dto;
 
-import com.yasirakbal.ordermanagementsystem.customer.CustomerType;
+import com.yasirakbal.ordermanagementsystem.customer.enums.CustomerType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @Getter
 @Setter
-public class CreateCustomerRequest {
+public class CustomerRequest {
     @NotBlank
     @Length(min = 2, max = 50)
     private String firstName;

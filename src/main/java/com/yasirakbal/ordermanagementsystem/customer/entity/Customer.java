@@ -1,6 +1,6 @@
 package com.yasirakbal.ordermanagementsystem.customer.entity;
 
-import com.yasirakbal.ordermanagementsystem.customer.CustomerType;
+import com.yasirakbal.ordermanagementsystem.customer.enums.CustomerType;
 import com.yasirakbal.ordermanagementsystem.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
