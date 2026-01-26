@@ -5,6 +5,6 @@ import com.yasirakbal.ordermanagementsystem.product.dto.ProductRequest;
 import com.yasirakbal.ordermanagementsystem.product.entity.Product;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ProductRequestMapper extends EntityDtoMapper<Product, ProductRequest> {
 }

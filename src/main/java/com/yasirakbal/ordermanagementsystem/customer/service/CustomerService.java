@@ -47,8 +47,8 @@ public class CustomerService {
             Boolean isActive,
             String city,
             String country,
-            int page,
-            int size,
+            Integer page,
+            Integer size,
             String sortBy,
             String direction) {
 

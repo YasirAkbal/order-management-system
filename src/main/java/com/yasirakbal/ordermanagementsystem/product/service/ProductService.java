@@ -47,13 +47,13 @@ public class ProductService {
             String sku,
             BigDecimal minPrice,
             BigDecimal maxPrice,
-            boolean inStock,
+            Boolean inStock,
             ProductCategoryType category,
-            boolean isActive,
+            Boolean isActive,
             LocalDateTime createdFrom,
             LocalDateTime createdTo,
-            int page,
-            int size,
+            Integer page,
+            Integer size,
             String sortBy,
             String direction
     ) {

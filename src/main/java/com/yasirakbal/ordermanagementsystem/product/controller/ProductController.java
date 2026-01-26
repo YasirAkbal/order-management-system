@@ -80,6 +80,18 @@ public class ProductController {
         return ResponseEntity.ok(paginationResponse);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable @Positive long id,
+                                                         @Valid @RequestBody ProductRequest request) {
+        Product product = productRequestMapper.dtoToEntity(request);
+        product.setId(id);
+
+        Product updatedProduct = productService.updateProduct(product);
+        ProductResponse productResponse = productResponseMapper.entityToDto(updatedProduct);
+
+        return ResponseEntity.ok(productResponse);
+    }
+
     @PatchMapping("/{id}/stock")
     public ResponseEntity<Void> updateStockQuantity(@PathVariable @Positive long id,
                                                     @Valid @RequestBody UpdateStockRequest request) {

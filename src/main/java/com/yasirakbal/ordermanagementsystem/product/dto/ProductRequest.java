@@ -17,7 +17,7 @@ public class ProductRequest {
     private String name;
 
     @NotBlank
-    @Length(min = 25, max = 1000)
+    @Length(min = 10, max = 1000)
     private String description;
 
     @NotBlank
