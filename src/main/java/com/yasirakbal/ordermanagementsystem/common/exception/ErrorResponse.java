@@ -1,10 +1,8 @@
 package com.yasirakbal.ordermanagementsystem.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Map;

@@ -9,7 +9,7 @@ import com.yasirakbal.ordermanagementsystem.customer.mapper.CustomerResponseMapp
 import com.yasirakbal.ordermanagementsystem.customer.entity.Customer;
 import com.yasirakbal.ordermanagementsystem.customer.service.CustomerService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponse> getUser(@PathVariable @Min(1) long id) {
+    public ResponseEntity<CustomerResponse> getUser(@PathVariable @Positive long id) {
         Customer customer = customerService.findCustomer(id);
         CustomerResponse customerResponse = customerResponseMapper.entityToDto(customer);
 
@@ -76,7 +76,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateUser(@PathVariable @Min(1) long id, @RequestBody @Valid CustomerRequest request) {
+    public ResponseEntity<CustomerResponse> updateUser(@PathVariable @Positive long id, @RequestBody @Valid CustomerRequest request) {
         Customer customer = customerRequestMapper.dtoToEntity(request);
         customer.setId(id);
 
@@ -87,7 +87,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateUser(@PathVariable @Min(1) long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable @Positive long id) {
         customerService.deleteCustomer(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

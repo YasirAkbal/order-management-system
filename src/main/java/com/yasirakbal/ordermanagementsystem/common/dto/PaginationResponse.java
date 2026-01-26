@@ -1,10 +1,6 @@
 package com.yasirakbal.ordermanagementsystem.common.dto;
 
-import com.yasirakbal.ordermanagementsystem.customer.dto.CustomerPaginationResponse;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
