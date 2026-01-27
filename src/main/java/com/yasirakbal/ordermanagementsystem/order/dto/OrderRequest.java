@@ -16,10 +16,9 @@ public class OrderRequest {
 
     @NotBlank
     @Length(min = 15)
-    private String address;
+    private String shippingAddress;
 
     @NotNull
-    @Length(min = 1, max = 50)
     private List<OrderItemRequestView> items;
 
     private String notes;

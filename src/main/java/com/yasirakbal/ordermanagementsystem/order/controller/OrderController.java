@@ -3,6 +3,7 @@ package com.yasirakbal.ordermanagementsystem.order.controller;
 import com.yasirakbal.ordermanagementsystem.order.dto.OrderRequest;
 import com.yasirakbal.ordermanagementsystem.order.dto.OrderResponse;
 import com.yasirakbal.ordermanagementsystem.order.dto.UpdateOrderStatusRequest;
+import com.yasirakbal.ordermanagementsystem.order.entity.Order;
 import com.yasirakbal.ordermanagementsystem.order.mappers.OrderRequestMapper;
 import com.yasirakbal.ordermanagementsystem.order.mappers.OrderResponseMapper;
 import com.yasirakbal.ordermanagementsystem.order.service.OrderService;
@@ -27,6 +28,9 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
+        Order order = orderRequestMapper.dtoToEntity(request);
+
+        orderService.createOrder(order);
         return null;
     }
 
