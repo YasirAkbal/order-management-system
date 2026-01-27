@@ -1,6 +1,5 @@
 package com.yasirakbal.ordermanagementsystem.order.service;
 
-import com.yasirakbal.ordermanagementsystem.common.exception.ResourceCollectionNotFoundException;
 import com.yasirakbal.ordermanagementsystem.common.exception.ResourceNotFoundException;
 import com.yasirakbal.ordermanagementsystem.customer.entity.Customer;
 import com.yasirakbal.ordermanagementsystem.customer.repository.CustomerRepository;
