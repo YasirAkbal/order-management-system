@@ -1,7 +1,7 @@
 package com.yasirakbal.ordermanagementsystem.order.entity;
 
 import com.yasirakbal.ordermanagementsystem.customer.entity.Customer;
-import com.yasirakbal.ordermanagementsystem.order.OrderStatusType;
+import com.yasirakbal.ordermanagementsystem.order.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,7 +35,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private OrderStatusType status = OrderStatusType.PENDING;
+    private OrderStatus status = OrderStatus.PENDING;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;

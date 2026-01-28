@@ -1,7 +1,7 @@
 package com.yasirakbal.ordermanagementsystem.product.entity;
 
 import com.yasirakbal.ordermanagementsystem.order.entity.OrderItem;
-import com.yasirakbal.ordermanagementsystem.product.ProductCategoryType;
+import com.yasirakbal.ordermanagementsystem.product.enums.ProductCategoryType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

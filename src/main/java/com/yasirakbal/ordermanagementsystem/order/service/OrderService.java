@@ -5,16 +5,27 @@ import com.yasirakbal.ordermanagementsystem.customer.entity.Customer;
 import com.yasirakbal.ordermanagementsystem.customer.repository.CustomerRepository;
 import com.yasirakbal.ordermanagementsystem.order.entity.Order;
 import com.yasirakbal.ordermanagementsystem.order.entity.OrderItem;
+import com.yasirakbal.ordermanagementsystem.order.enums.OrderStatus;
+import com.yasirakbal.ordermanagementsystem.order.exception.CustomerNotActiveException;
+import com.yasirakbal.ordermanagementsystem.order.exception.InvalidOrderStatusTransitionException;
+import com.yasirakbal.ordermanagementsystem.order.exception.OrderCannotBeCancelledException;
 import com.yasirakbal.ordermanagementsystem.order.exception.OrderValidationException;
 import com.yasirakbal.ordermanagementsystem.order.repository.OrderRepository;
+import com.yasirakbal.ordermanagementsystem.order.specification.OrderSpecification;
 import com.yasirakbal.ordermanagementsystem.order.utils.OrderNumberGenerator;
 import com.yasirakbal.ordermanagementsystem.product.entity.Product;
 import com.yasirakbal.ordermanagementsystem.product.repository.ProductRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +42,10 @@ public class OrderService {
         long customerId = order.getCustomer().getId();
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", customerId));
+
+        if(!customer.getIsActive()) {
+            throw new CustomerNotActiveException(customerId);
+        }
 
         order.setCustomer(customer);
 
@@ -139,5 +154,86 @@ public class OrderService {
                     .additionalInfo(additionalInfo)
                     .build());
         }
+    }
+
+    @Transactional
+    public Order getOrder(long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", id));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Order> getAllOrders(
+            String orderNumber,
+            OrderStatus status,
+            BigDecimal totalAmountMin,
+            BigDecimal totalAmountMax,
+            BigDecimal finalAmountMin,
+            BigDecimal finalAmountMax,
+            LocalDateTime orderDateFrom,
+            LocalDateTime orderDateTo,
+            String shippingAddress,
+            String notes,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("ASC")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Specification<Order> spec = OrderSpecification.filterBy(
+                orderNumber, status, totalAmountMin, totalAmountMax, finalAmountMin, finalAmountMax, orderDateFrom,
+                orderDateTo, shippingAddress, notes
+        );
+
+        return orderRepository.findAll(spec, pageable);
+    }
+
+    @Transactional
+    public void changeOrderStatus(long orderId, OrderStatus newOrderStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
+
+        if(!order.getStatus().canTransitionTo(newOrderStatus)) {
+            throw new InvalidOrderStatusTransitionException(order.getStatus(), newOrderStatus);
+        }
+
+        if(newOrderStatus.equals(OrderStatus.CANCELLED)) {
+            handleOrderCancellation(order);
+        }
+
+        order.setStatus(newOrderStatus);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void cancelOrder(long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
+
+        if(!order.getStatus().equals(OrderStatus.PENDING)) {
+            throw new OrderCannotBeCancelledException(orderId, order.getStatus());
+        }
+
+        handleOrderCancellation(order);
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void handleOrderCancellation(Order order) {
+        List<OrderItem> orderItems = order.getOrderItems();
+
+        orderItems.forEach(orderItem -> {
+            Product product = orderItem.getProduct();
+            int productStockQuantity = product.getStockQuantity();
+            product.setStockQuantity(productStockQuantity + orderItem.getQuantity());
+            productRepository.save(product);
+        });
     }
 }

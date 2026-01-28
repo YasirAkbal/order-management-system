@@ -1,7 +1,7 @@
 package com.yasirakbal.ordermanagementsystem.product.service;
 
 import com.yasirakbal.ordermanagementsystem.common.exception.ResourceNotFoundException;
-import com.yasirakbal.ordermanagementsystem.product.ProductCategoryType;
+import com.yasirakbal.ordermanagementsystem.product.enums.ProductCategoryType;
 import com.yasirakbal.ordermanagementsystem.product.entity.Product;
 import com.yasirakbal.ordermanagementsystem.product.exception.DuplicateSKUException;
 import com.yasirakbal.ordermanagementsystem.product.exception.NegativeStockQuantityException;

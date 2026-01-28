@@ -1,6 +1,6 @@
 package com.yasirakbal.ordermanagementsystem.product.dto;
 
-import com.yasirakbal.ordermanagementsystem.product.ProductCategoryType;
+import com.yasirakbal.ordermanagementsystem.product.enums.ProductCategoryType;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package com.yasirakbal.ordermanagementsystem.product;
+package com.yasirakbal.ordermanagementsystem.product.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

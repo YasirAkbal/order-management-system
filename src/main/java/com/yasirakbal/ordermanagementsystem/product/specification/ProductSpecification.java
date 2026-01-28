@@ -1,6 +1,6 @@
 package com.yasirakbal.ordermanagementsystem.product.specification;
 
-import com.yasirakbal.ordermanagementsystem.product.ProductCategoryType;
+import com.yasirakbal.ordermanagementsystem.product.enums.ProductCategoryType;
 import com.yasirakbal.ordermanagementsystem.product.entity.Product;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -83,6 +83,10 @@ public class ProductSpecification {
             if (isActive != null) {
                 predicates.add(
                         criteriaBuilder.equal(root.get("isActive"), isActive)
+                );
+            } else {
+                predicates.add(
+                        criteriaBuilder.equal(root.get("isActive"), true)
                 );
             }
 

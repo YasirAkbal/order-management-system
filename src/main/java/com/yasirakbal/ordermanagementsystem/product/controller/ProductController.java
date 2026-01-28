@@ -1,6 +1,6 @@
 package com.yasirakbal.ordermanagementsystem.product.controller;
 
-import com.yasirakbal.ordermanagementsystem.product.ProductCategoryType;
+import com.yasirakbal.ordermanagementsystem.product.enums.ProductCategoryType;
 import com.yasirakbal.ordermanagementsystem.product.dto.ProductPaginationResponse;
 import com.yasirakbal.ordermanagementsystem.product.dto.ProductRequest;
 import com.yasirakbal.ordermanagementsystem.product.dto.ProductResponse;

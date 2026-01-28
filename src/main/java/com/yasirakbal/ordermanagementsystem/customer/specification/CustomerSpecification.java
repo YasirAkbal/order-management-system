@@ -58,6 +58,10 @@ public class CustomerSpecification {
                 predicates.add(
                         criteriaBuilder.equal(root.get("isActive"), isActive)
                 );
+            } else {
+                predicates.add(
+                        criteriaBuilder.equal(root.get("isActive"), true)
+                );
             }
 
             if (city != null && !city.isBlank()) {

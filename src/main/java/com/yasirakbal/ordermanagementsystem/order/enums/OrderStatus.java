@@ -33,4 +33,8 @@ public enum OrderStatus {
     public boolean isFinalState() {
         return getAllowedTransitions().isEmpty();
     }
+
+    public boolean isActiveOrder() {
+        return this.equals(PENDING) || this.equals(CONFIRMED);
+    }
 }

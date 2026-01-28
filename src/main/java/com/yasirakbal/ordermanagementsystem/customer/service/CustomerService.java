@@ -3,6 +3,7 @@ package com.yasirakbal.ordermanagementsystem.customer.service;
 import com.yasirakbal.ordermanagementsystem.common.exception.ResourceNotFoundException;
 import com.yasirakbal.ordermanagementsystem.customer.enums.CustomerType;
 import com.yasirakbal.ordermanagementsystem.customer.entity.Customer;
+import com.yasirakbal.ordermanagementsystem.customer.exception.CustomerHasActiveOrdersException;
 import com.yasirakbal.ordermanagementsystem.customer.exception.DuplicateEmailException;
 import com.yasirakbal.ordermanagementsystem.customer.repository.CustomerRepository;
 import com.yasirakbal.ordermanagementsystem.customer.specification.CustomerSpecification;
@@ -81,11 +82,21 @@ public class CustomerService {
 
     @Transactional
     public void deleteCustomer(long customerId) {
-        if(!customerRepository.existsById(customerId)) {
-            throw new ResourceNotFoundException("Customer", customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", customerId));
+
+        if(customerHasActiveOrders(customer)) {
+            throw new CustomerHasActiveOrdersException(customerId);
         }
 
-        customerRepository.deleteById(customerId);
+        customer.setIsActive(false);
+        customerRepository.save(customer);
+    }
+
+    private boolean customerHasActiveOrders(Customer customer) {
+        return customer.getOrders()
+                .stream()
+                .anyMatch(order -> order.getStatus().isActiveOrder());
     }
 
 }
