@@ -13,4 +13,11 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o.orderNumber FROM Order o WHERE o.orderNumber LIKE :pattern ORDER BY o.orderNumber DESC LIMIT 1")
     Optional<String> findLastOrderNumberByPattern(@Param("pattern") String pattern);
+
+    @Query("SELECT DISTINCT o FROM Order o " +
+            "LEFT JOIN FETCH o.customer c " +
+            "LEFT JOIN FETCH o.orderItems oi " +
+            "LEFT JOIN FETCH oi.product p " +
+            "WHERE o.id = :id")
+    Optional<Order> findByIdWithDetails(@Param("id") Long id);
 }

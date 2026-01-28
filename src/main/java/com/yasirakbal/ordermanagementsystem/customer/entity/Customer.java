@@ -1,12 +1,10 @@
 package com.yasirakbal.ordermanagementsystem.customer.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yasirakbal.ordermanagementsystem.customer.enums.CustomerType;
 import com.yasirakbal.ordermanagementsystem.order.entity.Order;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "orders")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +54,7 @@ public class Customer {
     private LocalDateTime registeredAt;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<Order> orders;
 
     @PrePersist

@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,26 +32,70 @@ public class OrderService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", customerId));
 
-        List<OrderValidationException.OrderItemError> validationErrors = validateOrderItems(order.getOrderItems());
-        if(validationErrors.isEmpty()) {
-            throw new OrderValidationException(validationErrors);
-        }
+        order.setCustomer(customer);
 
-        String orderCode = orderNumberGenerator.generate();
-
-        return null;
-    }
-
-    private List<OrderValidationException.OrderItemError> validateOrderItems(List<OrderItem> orderItems) {
-        List<OrderValidationException.OrderItemError> errors = new ArrayList<>();
-
+        List<OrderItem> orderItems = order.getOrderItems();
         List<Long> productIds = orderItems.stream()
-                .map(OrderItem::getId)
+                .map(orderItem -> orderItem.getProduct().getId())
                 .toList();
 
         Map<Long, Product> availableProductsMap = productRepository.findAllById(productIds)
                 .stream()
                 .collect(Collectors.toMap(Product::getId, product -> product));
+
+        List<OrderValidationException.OrderItemError> validationErrors = validateOrderItems(orderItems, availableProductsMap);
+        if(!validationErrors.isEmpty()) {
+            throw new OrderValidationException(validationErrors);
+        }
+
+        String orderCode = orderNumberGenerator.generate();
+        BigDecimal totalAmount = orderItems.stream()
+                .map(orderItem ->   {
+                   Product product = availableProductsMap.get(orderItem.getProduct().getId());
+                   return product.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal customerTypeDiscountRate = customer.getCustomerType().getDiscountRate();
+        BigDecimal orderPriceDiscountRate = totalAmount.compareTo(BigDecimal.valueOf(500)) > 0
+                ? BigDecimal.valueOf(0.05)
+                : BigDecimal.ZERO;
+        BigDecimal totalDiscountRate = customerTypeDiscountRate.add(orderPriceDiscountRate);
+        BigDecimal totalDiscountAmount = totalAmount.multiply(totalDiscountRate);
+
+        BigDecimal finalAmount = totalAmount.subtract(totalDiscountAmount);
+
+        orderItems.forEach(orderItem -> {
+            long productId = orderItem.getProduct().getId();
+            int quantity = orderItem.getQuantity();
+
+            Product product = availableProductsMap.get(productId);
+            int newStockQuantity = product.getStockQuantity() - quantity;
+            product.setStockQuantity(newStockQuantity);
+            productRepository.save(product);
+        });
+
+        order.setOrderNumber(orderCode);
+        order.setTotalAmount(totalAmount);
+        order.setDiscountAmount(totalDiscountAmount);
+        order.setFinalAmount(finalAmount);
+
+        orderItems.forEach(orderItem -> {
+            long productId = orderItem.getProduct().getId();
+            Product product = availableProductsMap.get(productId);
+
+            orderItem.setUnitPrice(product.getPrice());
+            orderItem.calculateSubtotal();
+            orderItem.setOrder(order);
+            orderItem.setProduct(product);
+        });
+
+        return orderRepository.save(order);
+    }
+
+    private List<OrderValidationException.OrderItemError> validateOrderItems(List<OrderItem> orderItems,
+                                                                             Map<Long, Product> availableProductsMap) {
+        List<OrderValidationException.OrderItemError> errors = new ArrayList<>();
 
         orderItems.forEach(item -> validateSingleOrderItem(item, availableProductsMap, errors));
 

@@ -10,6 +10,7 @@ import com.yasirakbal.ordermanagementsystem.order.service.OrderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +30,12 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
         Order order = orderRequestMapper.dtoToEntity(request);
+        Order createdOrder = orderService.createOrder(order);
+        OrderResponse response = orderResponseMapper.entityToDto(createdOrder);
 
-        orderService.createOrder(order);
-        return null;
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping("/{id}")
